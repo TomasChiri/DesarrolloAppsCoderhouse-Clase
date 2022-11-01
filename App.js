@@ -1,17 +1,47 @@
 import { StatusBar } from 'expo-status-bar';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { useState } from 'react';
+import { Button, StyleSheet, Text, TextInput, View, FlatList } from 'react-native';
 
 export default function App() {
+  const [ textItem, setTextItem] = useState("");
+  const [ itemList, setItemList] = useState([]);
+
+  const onHandleChangeItem = (t) => {
+    setTextItem(t);
+  }
+
+  const addItem = () => {
+    setItemList(currentItems => [
+      ...currentItems,
+      {id: Math.random().toString(), value:textItem}
+    ]);
+    setTextItem("");
+  }
+
+  const renderItem = ({item}) => (
+    <View style={styles.items}>
+      <Text>{item.value}</Text>
+    </View>
+  )
+
   return (
     <View style={styles.container}>
+      <Text>Shopping List</Text>
       <View style={styles.itemContainer}>
-        <TextInput placeholder="Add item" style={styles.inputItem}/>
-        <Button title="Agregar" color="#841584"/>
+        <TextInput 
+          value={textItem} 
+          placeholder="Add your item" 
+          style={styles.inputItem}
+          onChangeText={onHandleChangeItem}
+        />
+        <Button title="ADD" onPress={addItem}/>
       </View>
-      <View style={styles.listaItems}>
-        <Text style={styles.textoItem}>Item 1</Text>
-        <Text style={styles.textoItem}>Item 2</Text>
-        <Text style={styles.textoItem}>Item 3</Text>
+      <View>
+        <FlatList 
+          data={itemList}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+        />
       </View>
     </View>
   );
@@ -23,6 +53,7 @@ const styles = StyleSheet.create({
     marginTop: 50,
   },
   itemContainer: {
+    marginTop: 30,
     flexDirection: "row", 
     justifyContent: "center", 
     alignItems: "center"
@@ -32,9 +63,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1, 
     width: 200
   },
-  listaItems:{
+  items:{
     justifyContent:"center",
-    alignItems: "center"
+    alignItems: "center",
+    marginTop: 50,
+    height: 30
   },
   textoItem:{
     marginBottom:20,
@@ -42,3 +75,11 @@ const styles = StyleSheet.create({
     width: "80%"
   }
 });
+
+{/* <View>
+{itemList.map((item) => (
+  <View style={styles.items}>
+    <Text>{item.value}</Text>
+  </View>
+))}
+</View> */}
